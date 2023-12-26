@@ -7,7 +7,8 @@ loadt -u <url> [...options]
 
 ### Options
 
+- `-u` To read a url.
 - `-n` Number of requests. (Default 1)
 - `-c` Concurrent Requests. (Default 1)
-- `-f` To look for urls from a file. If specified, can ommit `-u`.
+- `-f` To read line-seperated urls from a file. If specified, can ommit `-u`.
 - `-l` Lists all stats. 

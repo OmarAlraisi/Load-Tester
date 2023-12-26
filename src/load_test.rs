@@ -20,7 +20,7 @@ struct LoadTest {
 impl LoadTest {
     fn new(options: LoadOptions) -> Self {
         LoadTest {
-            url: options.url.clone().unwrap(),
+            url: options.urls[0].clone(),
             requests: vec![],
             duration: 0.0,
         }

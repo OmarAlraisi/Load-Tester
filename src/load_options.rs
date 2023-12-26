@@ -1,7 +1,7 @@
-use std::{env, process::exit};
+use std::{env, fs, process::exit};
 
 pub struct LoadOptions {
-    pub url: Option<String>,
+    pub urls: Vec<String>,
     pub num_of_requests: u32,
     pub concurrent: u8,
 }
@@ -9,7 +9,7 @@ pub struct LoadOptions {
 impl LoadOptions {
     fn new() -> Self {
         LoadOptions {
-            url: None,
+            urls: vec![],
             num_of_requests: 1,
             concurrent: 1,
         }
@@ -30,7 +30,7 @@ impl LoadOptions {
                         exit(1);
                     }
                     Some(url) => {
-                        options.url = Some(url.to_owned());
+                        options.urls.push(url.to_owned());
                     }
                 },
                 "-n" => match tokens.next() {
@@ -58,6 +58,16 @@ impl LoadOptions {
                             exit(1);
                         }
                     },
+                },
+                "-f" => match tokens.next() {
+                    None => {
+                        exit(1);
+                    }
+                    Some(file_name) => {
+                        let contents = fs::read_to_string(file_name).unwrap();
+                        let lines = contents.lines();
+                        lines.for_each(|url| options.urls.push(url.to_owned()));
+                    }
                 },
                 _ => {
                     println!("Invalid flag");

@@ -33,27 +33,29 @@ fn main() {
             requests
         };
 
-        let success = Arc::clone(&success);
-        let durations = Arc::clone(&durations);
-        let url = options.url.clone().unwrap();
+        let urls = options.urls.clone();
 
-        handles.push(thread::spawn(move || {
-            for _ in 0..requests {
-                let response = make_request(url.as_str());
-                let mut success = success.lock().unwrap();
-                let mut durations = durations.lock().unwrap();
-                match response {
-                    Ok((code, duration)) => match code {
-                        StatusCode::OK => {
-                            *success += 1;
-                            (*durations).push(duration);
-                        }
-                        _ => {}
-                    },
-                    Err(_) => {}
+        for url in urls {
+            let success = Arc::clone(&success);
+            let durations = Arc::clone(&durations);
+            handles.push(thread::spawn(move || {
+                for _ in 0..requests {
+                    let response = make_request(url.as_str());
+                    let mut success = success.lock().unwrap();
+                    let mut durations = durations.lock().unwrap();
+                    match response {
+                        Ok((code, duration)) => match code {
+                            StatusCode::OK => {
+                                *success += 1;
+                                (*durations).push(duration);
+                            }
+                            _ => {}
+                        },
+                        Err(_) => {}
+                    }
                 }
-            }
-        }));
+            }));
+        }
     }
     for handle in handles {
         handle.join().unwrap();
@@ -61,5 +63,5 @@ fn main() {
 
     let success = *success.lock().unwrap();
     let durations: Vec<f64> = durations.lock().unwrap().clone().into_iter().collect();
-    display_stats(start, options.num_of_requests, success, durations);
+    display_stats(start, options.num_of_requests * options.urls.len() as u32, success, durations);
 }
