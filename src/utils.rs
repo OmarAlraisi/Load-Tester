@@ -22,42 +22,7 @@ pub fn make_request(url: &str) -> Result<(StatusCode, f64), Error> {
     }
 }
 
-pub fn display_stats(start_time: f64, requests: u32, successes: u32, durations: Vec<f64>) {
-    let end_time = time::SystemTime::now()
-        .duration_since(time::UNIX_EPOCH)
-        .unwrap()
-        .as_secs_f64();
-    let duration = end_time - start_time;
-    println!("Results:");
-    println!("- Total Requests: ......................... {}", requests);
-    println!("- Total Successfull Requests: ............. {}", successes);
-    println!(
-        "- Total Failed Requests: .................. {}",
-        requests - successes
-    );
-    println!(
-        "- Requests/Second: ........................ {:.2}s",
-        f64::from(requests) / duration
-    );
-
-    let mut min = durations[0];
-    let mut max = durations[0];
-    let mut total: f64 = 0.0;
-
-    for duration in durations.iter() {
-        if *duration < min {
-            min = *duration;
-        }
-        if *duration > max {
-            max = *duration;
-        }
-        total += duration;
-    }
-
-    let mean = total / durations.len() as f64;
-
-    println!(
-        "- Request Time (min, mean, max): .......... {:.2}s, {:.2}s, {:.2}s",
-        min, mean, max
-    );
+pub fn pad_string(text: &str, pad_with: &str, line_size: usize) -> String {
+    let padding = pad_with.repeat((line_size - text.len()) / 2);
+    format!("{} {} {}", padding, text, padding)
 }

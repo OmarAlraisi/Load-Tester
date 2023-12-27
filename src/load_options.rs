@@ -1,7 +1,6 @@
 use std::{env, fs, process::exit};
 
 pub struct LoadOptions {
-    pub urls: Vec<String>,
     pub num_of_requests: u32,
     pub concurrent: u8,
 }
@@ -9,14 +8,14 @@ pub struct LoadOptions {
 impl LoadOptions {
     fn new() -> Self {
         LoadOptions {
-            urls: vec![],
             num_of_requests: 1,
             concurrent: 1,
         }
     }
 
-    pub fn parse() -> Self {
+    pub fn parse() -> (Self, Vec<String>) {
         let mut options = LoadOptions::new();
+        let mut urls: Vec<String> = vec![];
 
         let args: Vec<String> = env::args().collect();
         let mut tokens = args.iter();
@@ -30,7 +29,7 @@ impl LoadOptions {
                         exit(1);
                     }
                     Some(url) => {
-                        options.urls.push(url.to_owned());
+                        urls.push(url.to_owned());
                     }
                 },
                 "-n" => match tokens.next() {
@@ -66,7 +65,7 @@ impl LoadOptions {
                     Some(file_name) => {
                         let contents = fs::read_to_string(file_name).unwrap();
                         let lines = contents.lines();
-                        lines.for_each(|url| options.urls.push(url.to_owned()));
+                        lines.for_each(|url| urls.push(url.to_owned()));
                     }
                 },
                 _ => {
@@ -74,6 +73,6 @@ impl LoadOptions {
                 }
             }
         }
-        options
+        (options, urls)
     }
 }
