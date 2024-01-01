@@ -3,11 +3,11 @@ This is a server's load tester written in Rust.
 
 ## Usage
 
-loadt -u <url> [...options]
+cargo run -- -u <url> [...options]
 
 ### Options
 
-- `-u` To read a url.
+- `-u` Reads a url from the command line.
 - `-n` Number of requests. (Default 1)
-- `-c` Concurrent Requests. (Default 1)
-- `-f` To read line-seperated urls from a file. If specified, can ommit `-u`.
+- `-c` Number of concurrent threads. (Default 1)
+- `-f` Reads line-seperated urls from a file.
